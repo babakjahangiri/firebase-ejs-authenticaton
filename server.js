@@ -23,8 +23,12 @@ next();
 });
 
 app.get('/login', (req,res) => {
-res.render('signup.html');
+res.render('login.html');
 });
+
+app.get('/signup', (req,res) => {
+  res.render('signup.html');
+  });
 
 app.get('/profile',(req,res) => {
 res.render('profile.html');
