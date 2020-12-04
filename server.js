@@ -11,11 +11,18 @@ const app = express();
 app.engine("html", require('ejs').renderFile);
 app.use(express.static('static'));
 
-app.all("*" , (req,res,next) => {
+app.all('*' , (req,res,next) => {
 //res.cookie("XSRF-TOKEN", req.csrfToken());
 next();
 });
 
+app.get('/login', (req,res) => {
+res.render('signup.html');
+});
+
+app.get('/profile',(req,res) => {
+res.render('profile.html');
+})
 
 app.get("/", (req,res)=>{
 res.render("index.html")
