@@ -1,7 +1,9 @@
+const express = require('express');
+const path = require('path');
+const routes = require('./routes');
 const cookieParser = require('cookie-parser'); //for write & read cookies
 const csrf = require('csurf'); //to prevent us from CSRF(cross site request frogery) attacks
 const bodyParser = require('body-parser');
-const express = require('express');
 
 //check to find the require cookies in each request
 const csrfMiddleware = csrf({cookie:true});
@@ -14,29 +16,20 @@ app.use(cookieParser());
 //sets & checks csrf related cookies 
 app.use(csrfMiddleware);
 
-app.engine("html", require('ejs').renderFile);
-app.use(express.static('static'));
+//app.engine("html", require('ejs').renderFile);
+//app.use(express.static('static'));
+app.set('view engine','ejs');
+app.set('views', path.join(__dirname, './views'));
+app.use(express.static(path.join(__dirname, './static')));
+
+app.locals.siteName = 'Firebase Sample Authentication App';
 
 app.all('*' , (req, res, next) => {
   res.cookie("XSRF-TOKEN", req.csrfToken());
 next();
 });
 
-app.get('/login', (req,res) => {
-res.render('login.html');
-});
-
-app.get('/signup', (req,res) => {
-  res.render('signup.html');
-  });
-
-app.get('/profile',(req,res) => {
-res.render('profile.html');
-})
-
-app.get("/", (req,res)=>{
-res.render("index.html")
-});
+app.use('/',routes());
 
 app.listen(PORT,()=>{
 console.log(`App is running on http://localhost:${PORT}`);
