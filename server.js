@@ -4,7 +4,6 @@ const routes = require('./routes');
 const cookieParser = require('cookie-parser'); //for write & read cookies
 const csrf = require('csurf'); //to prevent us from CSRF(cross site request frogery) attacks
 const bodyParser = require('body-parser');
-
 //check to find the require cookies in each request
 const csrfMiddleware = csrf({cookie:true});
 const PORT = process.env.PORT || 5000;
@@ -29,7 +28,19 @@ app.all('*' , (req, res, next) => {
 next();
 });
 
+// app.use((req, res, next) => {
+//   return next(createError(404, 'file not found'));
+// });
+
 app.use('/',routes());
+
+// app.use((err,req,res,next) => {
+//   //res.local.message = err.message;
+//   const status = err.status || 500;
+//   res.local.status = status;
+//   res.status(status);
+//   res.render('error')
+// });
 
 app.listen(PORT,()=>{
 console.log(`App is running on http://localhost:${PORT}`);
