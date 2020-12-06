@@ -7,3 +7,51 @@
     <button>Log in</button>
   </form>
 </section>
+
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    const firebaseConfig = {
+  apiKey: "AIzaSyDGI_z65lgs4qyQjyQ2MVg9Yb75mSquYh0",
+  authDomain: "sample-firebase-452c8.firebaseapp.com",
+  projectId: "sample-firebase-452c8",
+  storageBucket: "sample-firebase-452c8.appspot.com",
+  messagingSenderId: "407694296949",
+  appId: "1:407694296949:web:526f9e4d146ee9ca17353c"
+};
+
+    firebase.initializeApp(firebaseConfig);
+
+    firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE);
+
+    document
+      .getElementById("login")
+      .addEventListener("submit", (event) => {
+        event.preventDefault();
+        const login = event.target.login.value;
+        const password = event.target.password.value;
+
+        firebase.auth()
+          .signInWithEmailAndPassword(login, password)
+          .then(({ user }) => {
+            return user.getIdToken().then((idToken) => {
+              return fetch("/sessionLogin", {
+                method: "POST",
+                headers: {
+                  Accept: "application/json",
+                  "Content-Type": "application/json",
+                  "CSRF-Token": Cookies.get("XSRF-TOKEN"),
+                },
+                body: JSON.stringify({ idToken }),
+              });
+            });
+          })
+          .then(() => {
+            return firebase.auth().signOut();
+          })
+          .then(() => {
+            window.location.assign("/profile");
+          });
+        return false;
+      });
+  });
+</script>
